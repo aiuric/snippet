@@ -41,3 +41,10 @@ public class CommonClient {
 
     }
 }
+
+/*
+observer 패턴
+observable (run() 구현) 에 obsever (update() 구현 -> 넘기는 데이터는 notifyObservers()의 인자로 전달)를 등록시키고 observable을 run()하면 등록된 observer의 update()를 call 하는 패턴
+observable -> publisher(mono or flux)
+obsever -> subscriber
+*/
