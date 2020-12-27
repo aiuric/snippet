@@ -36,5 +36,24 @@ public class AllOfTest {
         .allOf : 동시에 N개의 요청을 호출하고 나서 모든 스테이지가 완료되면 다음 스테이지를 실행한다.
         .anyOf : 동시에 N개의 요청을 호출하고 나서 하나라도 호출이 완료되면 다음 스테이지를 실행한다.
          */
+        
+        
+        /* method reference */
+        // 1. static method reference (인자 -> 인자로 추론)
+        //.thenAcceptAsync(messages -> messages.forEach(message -> System.out.println(message)));
+        .thenAcceptAsync(messages -> messages.forEach(System.out::println)); // static method reference
+        
+        // 2.1 instance method reference (인자 -> 인자로 추론)
+        //CompletableFuture.supplyAsync(this::buildMessage);
+        CompletableFuture.supplyAsync(() -> this.buildMessage());
+        
+        // 2.2 instance method reference (인자 -> 참조로 추론)
+        //CompletableFuture.supplyAsync((arg0, rest) -> arg0.instanceMethod(rest));
+        CompletableFuture.supplyAsync(ClassName::instanceMethod);
+        
+        // 3. constuctor reference (인자 -> 참조로 추론)
+        //CompletableFuture.supplyAsync((arg0) -> new Class(arg0);
+        CompletableFuture.supplyAsync(Class::new);        
+        */
     }
 }
