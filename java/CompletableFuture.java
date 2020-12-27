@@ -54,6 +54,5 @@ public class AllOfTest {
         // 3. constuctor reference (인자 -> 참조로 추론)
         //CompletableFuture.supplyAsync((arg0) -> new Class(arg0);
         CompletableFuture.supplyAsync(Class::new);        
-        */
     }
 }
