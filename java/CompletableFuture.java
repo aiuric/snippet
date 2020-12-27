@@ -51,7 +51,7 @@ public class AllOfTest {
         //CompletableFuture.supplyAsync((arg0, rest) -> arg0.instanceMethod(rest));
         CompletableFuture.supplyAsync(ClassName::instanceMethod);
         
-        // 3. constuctor reference (인자 -> 참조로 추론)
+        // 3. constuctor reference (인자 -> 인자로 추론)
         //CompletableFuture.supplyAsync((arg0) -> new Class(arg0);
         CompletableFuture.supplyAsync(Class::new);        
     }
