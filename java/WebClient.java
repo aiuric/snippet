@@ -64,6 +64,7 @@ public class CommonClient {
         Flux<String> methodFlux = chainStartMethod();
 
         // lambda 사용
+        // Supplier<T> : () -> T 
         Flux<String> deferFlux = Flux.defer(() -> {
             try {
                 Thread.sleep(5 * 1000L);
@@ -83,6 +84,7 @@ public class CommonClient {
         });
 
         // lambda 사용
+        // Fucntion<T, R> : (T t) -> R;
         deferFlux.flatMap(ar -> chainMethod(ar)).flatMap(ar -> {
             try {
                 Thread.sleep(5 * 1000L);
@@ -93,6 +95,10 @@ public class CommonClient {
         }).subscribeOn(Schedulers.elastic()).log().subscribe(dc -> {
             System.out.println(dc);
         });
+        
+        // lambda
+        // Predicate<T, Boolean> : (T t) -> boolean
+        // Consumer<T> : (T t) -> void
     }
 }
 
