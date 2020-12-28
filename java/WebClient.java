@@ -22,23 +22,77 @@ public class CommonClient {
                 .bodyToFlux(DeviceCapability.class);
 
         // multi call 모두 response 된 후 처리
-        Flux.zip(helloFlux, deviceCapabilityFlux).subscribe(dc -> {
+        Flux.zip(helloFlux, deviceCapabilityFlux).subscribeOn(Schedulers.elastic()).subscribe(dc -> {
                     System.out.println(dc.getT1());
                     System.out.println(dc.getT2().getPollRate());
                 }
         );
 
         // 하나 call 한 결과를 이용해서 다른 call을 수행
-        helloFlux.subscribe(dc -> {
+        // callback hell 위험성 쓰지말자!!!
+        helloFlux.subscribeOn(Schedulers.elastic()).subscribe(dc -> {
             Flux<DeviceCapability> deviceCapability2Flux = client.get()
                     .uri("/sep2/dcap")
                     .accept(MediaType.parseMediaType("application/sep+xml"))
                     .retrieve()
                     .bodyToFlux(DeviceCapability.class);
 
-            deviceCapability2Flux.subscribe(dc2 -> System.out.println(dc2.getPollRate()));
+            deviceCapability2Flux.subscribeOn(Schedulers.elastic()).subscribe(dc2 -> System.out.println(dc2.getPollRate()));
+        });
+    }
+    
+    Flux<String> chainStartMethod() {
+        try {
+            Thread.sleep(5 * 1000L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return Flux.just(" calledChainStartMethod");
+    }
+
+    Flux<String> chainMethod(String tmp) {
+        try {
+            Thread.sleep(5 * 1000L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return Flux.just(tmp + " calledChainMethod");
+    }
+    
+    // 재사용성이 없으니 lambda를 적극 사용할 것
+    public void chainingTest() throws Exception {
+        Flux<String> methodFlux = chainStartMethod();
+
+        // lambda 사용
+        Flux<String> deferFlux = Flux.defer(() -> {
+            try {
+                Thread.sleep(5 * 1000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return Flux.just(" calledDeferFlux");
         });
 
+
+        methodFlux.flatMap(ar -> chainMethod(ar)).flatMap(ar -> chainMethod(ar)).subscribeOn(Schedulers.elastic()).log().subscribe(dc -> {
+            System.out.println(dc);
+        });
+
+        deferFlux.flatMap(ar -> chainMethod(ar)).flatMap(ar -> chainMethod(ar)).subscribeOn(Schedulers.elastic()).log().subscribe(dc -> {
+            System.out.println(dc);
+        });
+
+        // lambda 사용
+        deferFlux.flatMap(ar -> chainMethod(ar)).flatMap(ar -> {
+            try {
+                Thread.sleep(5 * 1000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return Flux.just(ar + " calledChainMethod");
+        }).subscribeOn(Schedulers.elastic()).log().subscribe(dc -> {
+            System.out.println(dc);
+        });
     }
 }
 
