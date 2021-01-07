@@ -6,3 +6,12 @@ int timesFour(int x) => timesTwo(timesTwo(x));
 int timesFour(int x) {
   return timesTwo(timesTwo(x));
 }
+
+// Functions parameter로 전달 가능
+// Function은 Object이다
+int runTwice(int x, Function f) {
+  for (var i = 0; i < 2; i++) {
+    x = f(x);
+  }
+  return x;
+}
